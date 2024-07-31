@@ -52,7 +52,8 @@ Errors and failed records are logged in the specified log and failed records fil
 
 ## Important Notes:
 
-1. Please this script in the directory with read write permissions
+1. This script assumes that you have created the table with the same field names which are present in the csv. In this version all feilds in the csv must be present in the vault. Vault can have additional fields which are not present in the CSV.
+2. Please this script in the directory with read write permissions
 2. This is tested on Python 3.10.12. it may or may not work on lower versions
 3. Do not increase the max number of rows to anything more than 25 as this is limit enforced on Skyflow Vault. The script will fail of this number is more than 25.
 4. Skyflow Python SDK Should be installed to use this script. Refer to https://github.com/skyflowapi/skyflow-python?tab=readme-ov-file#installation for installing the skyflow SDK.
@@ -61,3 +62,8 @@ Errors and failed records are logged in the specified log and failed records fil
 ## License
 
 This is an open-source community script, and Skyflow bears no responsibility for its usage.
+
+## What's Next (todo)
+
+1. Add option to skip certain fields from the input CSV.
+2. Add option to define a custom map in case the field names in CSV and the vault do not match.
