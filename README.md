@@ -43,6 +43,7 @@ python insert_and_tokenize.py --xid YOUR_ACCOUNT_ID --vurl YOUR_VAULT_URL --vid 
 
 ## Arguments
 
+ ```sh
 --xid:  Required. Skyflow account ID.
 --vurl: Required. Vault URL (e.g., ebfc9bee4242.vault.skyflowapis.com).
 --vid:  Required. Vault ID.
@@ -55,6 +56,7 @@ python insert_and_tokenize.py --xid YOUR_ACCOUNT_ID --vurl YOUR_VAULT_URL --vid 
 --mt:   Optional. Maximum number of parallel API calls (default: 5, max: 5).
 --ff:   Optional. Path to the CSV file for failed records (default: failed_records.csv).
 --log:  Optional. Path to the log file (default: error.log).
+```
 
 ## Logging
 
