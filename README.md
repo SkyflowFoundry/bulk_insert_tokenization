@@ -19,28 +19,16 @@ This script inserts and tokenizes data using Skyflow vault. It reads PII data fr
 - `tqdm` library
 
 
-## Installation
-
-1. Clone this repository:
-    ```sh
-    git clone <repository-url>
-    ```
-2. Navigate to the project directory:
-    ```sh
-    cd <repository-directory>
-    ```
-3. Install the required Python packages:
-    ```sh
-    pip install requests argparse tqdm
-    ```
-
 ## Usage
 
+```sh
 python insert_and_tokenize.py --xid <Skyflow account ID> --vurl <Vault URL> --vid <Vault ID> --t <Table name> --pc <Path to credentials JSON> --pi <Path to input CSV> --po <Path to output CSV>
+```
 
 ## Example
+```sh
 python insert_and_tokenize.py --xid YOUR_ACCOUNT_ID --vurl YOUR_VAULT_URL --vid YOUR_VAULT_ID --t YOUR_TABLE_NAME --pc path/to/credentials.json --pi path/to/input.csv --po path/to/output.csv
-
+```
 ## Arguments
 
  ```sh
