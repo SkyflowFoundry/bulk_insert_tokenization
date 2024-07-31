@@ -1,4 +1,4 @@
-# Skyflow Vault Data Inserter
+# Skyflow Vault Bulk Data Insert and Tokenization Script
 
 This script inserts and tokenizes data using Skyflow vault. It reads PII data from an input CSV, makes API calls to Skyflow for tokenization, and writes the tokenized data to an output CSV.
 
