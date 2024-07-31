@@ -20,7 +20,7 @@ parser.add_argument('--bt', help='Required: Bearer token for API calls (either -
 parser.add_argument('--pi', required=True, help='Required: Path to the input CSV file containing PII data')
 parser.add_argument('--po', required=True, help='Required: Path to the output CSV file for tokenized data')
 parser.add_argument('--r', type=int, default=25, help='Optional: Number of rows to be inserted per API call (default: 25)')
-parser.add_argument('--mt', type=int, default=5, choices=range(1, 6), help='Optional: Maximum number of parallel API calls (default: 5, max: 5)')
+parser.add_argument('--mt', type=int, default=5, choices=range(1, 8), help='Optional: Maximum number of parallel API calls (default: 5, max: 7)')
 parser.add_argument('--ff', default='failed_records.csv', help='Optional: Path to the CSV file for failed records (default: failed_records.csv)')
 parser.add_argument('--log', default='error.log', help='Optional: Path to the log file (default: error.log)')
 args = parser.parse_args()

@@ -41,7 +41,7 @@ python insert_and_tokenize.py --xid YOUR_ACCOUNT_ID --vurl YOUR_VAULT_URL --vid 
 --pi:   Required. Path to the input CSV file containing PII data.
 --po:   Required. Path to the output CSV file for tokenized data.
 --r:    Optional. Number of rows to be inserted per API call (default: 25).
---mt:   Optional. Maximum number of parallel API calls (default: 5, max: 5).
+--mt:   Optional. Maximum number of parallel API calls (default: 5, max: 7).
 --ff:   Optional. Path to the CSV file for failed records (default: failed_records.csv).
 --log:  Optional. Path to the log file (default: error.log).
 ```
