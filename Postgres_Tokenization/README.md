@@ -15,31 +15,32 @@ This Python script facilitates the process of tokenizing sensitive data using Sk
 
 ## Prerequisites
 
-- Python 3.8 or higher
-- PostgreSQL database
-- Skyflow API account
+- Python 3.8 or higher (can work on lower version but its not tested)
+- PostgreSQL database (Used Postgres 16.3 when testing the script. Other verions not tested)
+- Skyflow PI account
 - Required Python packages (listed in `requirements.txt` or can be installed via pip)
 
 ## Installation
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/your-repository/tokenize_data_postgres.git
-    cd tokenize_data_postgres
-    ```
-
-2. **Install the required Python packages**:
+1. **Install the required Python packages**:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. **Set up your PostgreSQL databases**:
-   - Ensure that both the source (input) and target (output) PostgreSQL databases are configured and accessible.
+2 **Set up schema in Skyflow vault**:
+   - Ensure to create a table in Skyflow vault with matching field names as in source postgres table. The script will fail if the field names in postgres and Skyflow table don't match.
+   - Create a service account with appropriate permissions to insert the data in the vault table. Make sure you have either a credentials.json or API key for the service account.
+   - Also please note that if you have tokenization disabled on certain fields in the vault, the script by default will write the source data as is into destination postgres table for that field.
+
+3 **Set up your PostgreSQL databases**:
+   - Ensure that both the source (input) and target (output) PostgreSQL database / tabel are configured and accessible.
    - Create the necessary tables in both the source and target databases if they don’t already exist.
+   - Ensure that both the source (input) and target (output) PostgreSQL tables has matching field names.
+   
 
 ## Configuration
 
-Before running the script, you need to configure it using a configuration file (e.g., `config_pgsql.ini`).
+Before running the script, you need to configure it using a configuration file (e.g., `config_pgsql.ini`). 
 
 ##  
 ### Configuration File Structure
