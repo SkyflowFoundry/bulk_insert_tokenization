@@ -119,7 +119,7 @@ write_skip_columns_as_is = False
 1. Generate the configuration file template (if you haven't already):
 
 ```bash
-python3 tokenize_data_postgres_v2.py --gen-config-pgsql
+python3 tokenize_data_postgres.py --gen-config-pgsql
 ```
 
 This generates a config_pgsql.ini file template that you can customize.
@@ -127,7 +127,7 @@ This generates a config_pgsql.ini file template that you can customize.
 2. Run the script:
 
 ```bash  
-python3 tokenize_data_postgres_v2.py --config-file config_pgsql.ini
+python3 tokenize_data_postgres.py --config-file config_pgsql.ini
 ```
 This will process the data according to your configuration, tokenize the specified fields using Skyflow, and write the results to the output PostgreSQL database.
 
