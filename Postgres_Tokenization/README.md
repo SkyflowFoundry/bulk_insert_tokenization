@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Python script facilitates the process of tokenizing sensitive data using Skyflow's Data Privacy Vault and storing the tokenized data into a PostgreSQL database. The script fetches data from a source PostgreSQL database, sends it to Skyflow for tokenization, and then writes the tokenized data, along with a `skyflow_id`, to a destination PostgreSQL database.
+This Python script facilitates the process of tokenizing sensitive data using Skyflow's Data Privacy Vault and storing the tokenized data into a PostgreSQL database. The script fetches data from a source PostgreSQL database, sends it to Skyflow API for tokenization, and then writes the tokenized data, along with a `skyflow_id`, to a destination PostgreSQL database.
 
 ## Features
 
