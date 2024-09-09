@@ -2,6 +2,4 @@
 
 This is the repository where you can find script to do bulk tokenization. Please refer Readme in individual folders for more details on how to use this scripts. 
 
-## License
 
-This are open-source community scripts, and Skyflow bears no responsibility for its usage.
