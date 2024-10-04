@@ -10,8 +10,8 @@ from tqdm import tqdm
 from configparser import ConfigParser
 from skyflow.service_account import generate_bearer_token
 
-# Function to generate a CSV config file template
-def generate_csv_config_file(config_file):
+# Function to generate a config file template
+def generate_config_file(config_file):
     with open(config_file, 'w') as file:
         file.write("[DEFAULT]\n")
         file.write("# Skyflow configuration parameters\n\n")
@@ -43,18 +43,18 @@ def generate_csv_config_file(config_file):
         file.write("# Maximum API calls per minute (Optional: default=70)\n")
         file.write("max_calls_per_minute=70\n\n")
 
-        file.write("[INPUT_CSV]\n")
-        file.write("# Configuration for the input CSV File\n")
-        file.write("input_csv_file_path=\n\n")
+        file.write("[INPUT_FILE]\n")
+        file.write("# Configuration for the input file\n")
+        file.write("input_file_path=\n\n")
 
-        file.write("[OUTPUT_CSV]\n")
-        file.write("# Configuration for the output CSV File\n")
-        file.write("output_csv_file_path=\n\n")
+        file.write("[OUTPUT_FILE]\n")
+        file.write("# Configuration for the output file\n")
+        file.write("output_file_path=\n\n")
 
         file.write("[COLUMN_SKIP]\n")
         file.write("# If you want column(s) to be skipped then provide comma seperated column names with no spaces\n")
         file.write("skip_columns=\n")
-        file.write("# If you set the below value to True then the skipped columns will be written as is in the destination CSV\n")
+        file.write("# If you set the below value to True then the skipped columns will be written as is in the destination file\n")
         file.write("write_skip_columns_as_is=False\n\n")
 
 # Function to load configuration from a file
@@ -63,40 +63,41 @@ def load_config(config_file):
     config.read(config_file)
     return config
 
-# Function to get filtered columns from the CSV header
+# Function to get filtered columns from the file header
 def get_filtered_columns(config, rows):
     skip_columns = config.get('COLUMN_SKIP', 'skip_columns', fallback='').split(',')
     skip_columns = [col.strip().lower() for col in skip_columns if col.strip()]
     all_columns = [col.lower() for col in rows[0]]  # Assuming the first row contains the headers
     filtered_columns = [col for col in all_columns if col not in skip_columns]
     
-    print(f"Fetched columns from CSV: {all_columns}")
+    print(f"Fetched columns from file: {all_columns}")
     print(f"Columns to skip: {skip_columns}")
     print(f"Filtered columns: {filtered_columns}")
     
     return filtered_columns, skip_columns, all_columns
 
-# Function to fetch data from CSV
-def fetch_csv_data(rows, offset, rows_per_chunk):
+# Function to fetch data from file
+def fetch_file_data(rows, offset, rows_per_chunk):
     # Skip the header row by starting from the second row
-    return rows[offset + 1:offset + 1 + rows_per_chunk], rows[0]  # Ensure the header row is only returned separately
+    return rows[offset:offset+rows_per_chunk], rows[0]  # Ensure the header row is only returned separately
 
-# Function to get row count from CSV
-def get_csv_row_count(rows):
-    print("Fetching row count from CSV file")
+# Function to get row count from file
+def get_file_row_count(rows):
+    print("Fetching row count from file")
     row_count = len(rows) - 1  # Exclude the header row
     print(f"Row count: {row_count}")
     return row_count
 
-# Function to write tokenized data into CSV
-# Function to write tokenized data into CSV
-def write_tokenized_data_to_csv(config, tokenized_data, pbar, headers):
-    output_file_path = config.get('OUTPUT_CSV', 'output_csv_file_path')
-    print(f"Writing tokenized data to CSV file {output_file_path}")
+# Function to write tokenized data into file
+def write_tokenized_data_to_file(config, tokenized_data, pbar, headers,dialect):
+    output_file_path = config.get('OUTPUT_FILE', 'output_file_path')
+    print(f"Writing tokenized data to the file {output_file_path}")
 
     with open(output_file_path, mode='w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.writer(csvfile)
-
+        
+        writer = csv.writer(csvfile,dialect=dialect,escapechar="\\")
+# Add the skyflow_id header to the output file
+        headers.insert(0,'skyflow_id')
         # Write the header row
         writer.writerow(headers)
 
@@ -183,15 +184,15 @@ def process_chunk(rows, headers, columns, api_url, write_skip_columns_as_is, ski
 
 # Main script execution
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Insert data into Skyflow vault and write tokens to output CSV.")
-    parser.add_argument('--gen-config-csv', action='store_true', help='Generate a config file template for CSV. No other options are accepted with this.')
+    parser = argparse.ArgumentParser(description="Insert data into Skyflow vault and write tokens to output file.")
+    parser.add_argument('--gen-config-csv', action='store_true', help='Generate a config file template. No other options are accepted with this.')
     parser.add_argument('--config-file', help='Path to the configuration file.')
     parser.add_argument('--log-level', help='Set the logging level', default='ERROR')
 
     args = parser.parse_args()
 
     if args.gen_config_csv:
-        generate_csv_config_file('config_csv.ini')
+        generate_config_file('config_csv.ini')
         exit(0)
 
     if not args.config_file:
@@ -214,18 +215,21 @@ if __name__ == "__main__":
         "Authorization": f"{tokenType} {accessToken}"
     }
 
-    api_url = f"https://{config.get('DEFAULT', 'vault_url')}/v1/vaults/{config.get('DEFAULT', 'vault_id')}/{config.get('DEFAULT', 'table_name')}"
+    api_url = f"{config.get('DEFAULT', 'vault_url')}/v1/vaults/{config.get('DEFAULT', 'vault_id')}/{config.get('DEFAULT', 'table_name')}"
+    file_dialect = {};
 
-    if 'INPUT_CSV' in config and 'OUTPUT_CSV' in config:
-        with open(config.get('INPUT_CSV', 'input_csv_file_path'), mode='r', newline='', encoding='utf-8') as csvfile:
-            reader = csv.reader(csvfile)
+    if 'INPUT_FILE' in config and 'OUTPUT_FILE' in config:
+        with open(config.get('INPUT_FILE', 'input_file_path'), mode='r', newline='', encoding='utf-8') as csvfile:
+            file_dialect = csv.Sniffer().sniff(csvfile.readline())
+            csvfile.seek(0)
+            reader = csv.reader(csvfile,  dialect=file_dialect,escapechar="\\")
             rows = list(reader)
 
         # Extract and store the headers separately
         headers_row = rows[0]
         data_rows = rows[1:]  # Skip the header row
-
-        row_count = get_csv_row_count(rows)
+       
+        row_count = get_file_row_count(rows)
         print(f"Starting processing of {row_count} rows")
 
         filtered_columns, skip_columns, all_columns = get_filtered_columns(config, [headers_row] + data_rows)
@@ -238,7 +242,7 @@ if __name__ == "__main__":
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_parallel_tasks) as executor:
                 futures = []
                 for offset in range(0, row_count, rows_per_chunk):
-                    input_data, _ = fetch_csv_data(data_rows, offset, rows_per_chunk)  # Pass data_rows without header
+                    input_data, _ = fetch_file_data(data_rows, offset, rows_per_chunk)  # Pass data_rows without header
                     future = executor.submit(process_chunk, input_data, headers, filtered_columns, api_url, write_skip_columns_as_is, skip_columns, all_columns)
                     futures.append(future)
 
@@ -255,10 +259,9 @@ if __name__ == "__main__":
             reader = csv.reader(temp_output_file)
             tokenized_data = list(reader)
 
-        with tqdm(total=len(tokenized_data), desc="Writing to destination CSV", unit="rows") as pbar_writing:
+        with tqdm(total=len(tokenized_data), desc="Writing to destination file", unit="rows") as pbar_writing:
             # Write the headers first, followed by the tokenized data
-            write_tokenized_data_to_csv(config, tokenized_data, pbar_writing, headers_row)
+            write_tokenized_data_to_file(config, tokenized_data, pbar_writing, headers_row, file_dialect)
 
         os.remove(temp_output_path)
         print("Processing completed successfully")
-
