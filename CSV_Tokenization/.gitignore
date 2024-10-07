@@ -1,0 +1,7 @@
+input_files/
+output_files/
+config*
+credentials.json
+credentials*
+error.log
+settings.json
